@@ -1,0 +1,102 @@
+# Snowflake Integration Guide (For Hunch)
+
+Hey! If you're setting up Snowflake so Hunch can read your product data and help you move faster, here's exactly what to do.
+
+Takes ~5 minutes. Just follow the steps, and you're good.
+
+---
+
+## ✅ What you need before you start
+
+- You should be an **ACCOUNTADMIN** (or have rights to create roles + integrations).
+- Know your:
+    - `database` name (e.g. `PROD_DB`)
+    - `schema` name (e.g. `PUBLIC`)
+    - `warehouse` name (e.g. `COMPUTE_WH`)
+- 👤 A **Snowflake user** you'll assign access to (e.g. `matan`) — this is the user Hunch will use to query your data
+
+---
+
+## 🧙‍♂️ Run these SQL commands in Snowflake
+
+Copy + paste the block below into your worksheet. Replace:
+
+- `{database}` with your actual database name
+- `{schema}` with your actual schema
+- `{warehouse}` with your actual warehouse
+- `{user}` with the Snowflake user (e.g. `matan`)
+
+```sql
+CREATE ROLE IF NOT EXISTS HUNCH_ANALYST;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA {database}.{schema} TO ROLE HUNCH_ANALYST;
+GRANT USAGE ON DATABASE {database} TO ROLE HUNCH_ANALYST;
+GRANT USAGE ON SCHEMA {schema} TO ROLE HUNCH_ANALYST;
+GRANT USAGE ON WAREHOUSE {warehouse} TO ROLE HUNCH_ANALYST;
+
+GRANT ROLE HUNCH_ANALYST TO USER {user};
+
+CREATE SECURITY INTEGRATION HUNCH_OAUTH_INTEGRATION
+  TYPE = OAUTH
+  ENABLED = TRUE
+  OAUTH_CLIENT = CUSTOM
+  OAUTH_CLIENT_TYPE = 'CONFIDENTIAL'
+  OAUTH_REDIRECT_URI = 'https://api.nango.dev/oauth/callback'
+  OAUTH_ISSUE_REFRESH_TOKENS = TRUE
+  OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+  PRE_AUTHORIZED_ROLES_LIST = ('HUNCH_ANALYST');
+
+SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('HUNCH_OAUTH_INTEGRATION');
+```
+
+---
+
+## 📤 Get your OAuth credentials
+
+After running the last line, you'll get:
+
+- `client_id`
+- `client_secret`
+
+Please send those back securely (encrypted note, 1Password share link, whatever works for you).
+
+Once we have that — we're good to go 🚀
+
+---
+
+## 🚀 Now finish the connection inside Hunch
+
+Once the SQL setup is done:
+
+1. Log in to [app.hunch.dev](https://app.hunch.dev/)
+2. On "Sources" page → Click "Connect" on Snowflake integration.
+3. Follow this short 1-min video that shows the rest of the setup —
+    
+    entering your Snowflake domain, logging in, and selecting your DB / schema / warehouse
+    
+
+🎥 *Video: How to connect Snowflake inside Hunch*
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/58h_aoSTjzQ"
+  title="How to connect Snowflake inside Hunch"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+></iframe>
+
+That's it. You're live.
+
+---
+
+## 💬 Need help?
+
+Ping us anytime. We'll walk you through it.
+
+---
+
+## 🔒 A note on security
+
+> **Security Note**: Hunch uses OAuth2 integration, the industry standard for secure Snowflake connections, which creates temporary, user-specific authentications that expire automatically and can be revoked instantly. This approach ensures granular access control and eliminates the need for permanent credentials, making it Snowflake's recommended method for secure third-party integrations. [Learn more about OAuth security →](https://docs.snowflake.com/en/user-guide/oauth-ext-custom) 

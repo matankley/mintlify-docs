@@ -7,18 +7,18 @@
     "light": "#A5B4FC",
     "dark": "#4F46E5"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/public/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Docs",
+        "tab": "Documentation",
         "groups": [
           {
             "group": "Get Started",
             "pages": [
-              "introduction",
-              "quickstart",
-              "integrations"
+              "pages/introduction",
+              "pages/quickstart",
+              "pages/integrations"
             ]
           }
         ]
@@ -27,21 +27,16 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Hunch Home",
-          "href": "https://hunch.dev",
+          "anchor": "Hunch App",
+          "href": "https://app.hunch.dev",
           "icon": "house"
-        },
-        {
-          "anchor": "Support",
-          "href": "mailto:support@hunch.dev",
-          "icon": "envelope"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/hunch-light.svg",
-    "dark": "/logo/hunch-dark.svg"
+    "light": "/public/logo/hunch-light.svg",
+    "dark": "/public/logo/hunch-dark.svg"
   },
   "navbar": {
     "links": [
@@ -58,9 +53,9 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/hunchdev",
-      "github": "https://github.com/hunch-dev",
-      "linkedin": "https://linkedin.com/company/hunch-dev"
-    }
+      "x": "https://x.com/hunch_dev",
+      "linkedin": "https://www.linkedin.com/company/hunch-dev"
+    },
+    "poweredBy": false
   }
 }
