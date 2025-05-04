@@ -1,0 +1,72 @@
+# BigQuery Integration Guide
+
+This guide will help you securely connect your BigQuery account to Hunch using Google SSO in just a few minutes.
+
+---
+
+## ✅ What You'll Need
+
+- **Google Account** with access to BigQuery
+- **BigQuery Project ID**
+
+---
+
+## 1️⃣ Prepare Your Google Account
+
+1. Make sure you have a Google account with access to BigQuery
+2. Ensure you have the necessary permissions to access BigQuery data
+3. Note down your BigQuery Project ID from your Google Cloud Console
+
+<img 
+  src="/public/images/bigquery-integration/locate-gcp-project-id.png" 
+  alt="Google Cloud Console"
+  className="w-full rounded-lg shadow-lg my-4"
+/>
+
+---
+
+## 2️⃣ Connect BigQuery to Hunch
+
+### Step 1: Access Hunch Settings
+1. Log into [Hunch.dev](https://app.hunch.dev/login)
+2. Go to **Settings > Integrations**
+3. Click **+Connect** in the upper right
+4. Select **BigQuery** from the integration options
+
+<img 
+  src="/public/images/shared/add-integration.png" 
+  alt="Add Integration"
+  className="w-full rounded-lg shadow-lg my-4"
+/>
+
+### Step 2: Authenticate with Google
+5. Click **Sign in with Google** to authenticate with your Google account
+
+<img 
+  src="/public/images/bigquery-integration/sso-google.png" 
+  alt="Google Sign In"
+  className="w-full rounded-lg shadow-lg my-4"
+/>
+
+### Step 3: Complete the Setup
+6. Select the Google account you want to use for the integration
+7. Grant the necessary permissions when prompted
+8. Fill in the Google Project ID from step 1
+
+<img 
+  src="/public/images/bigquery-integration/bigquery-project-id.png" 
+  alt="BigQuery Project ID"
+  className="w-full rounded-lg shadow-lg my-4"
+/>
+
+---
+
+## 🎉 Done! You're now connected.
+
+Need help? Ping us at [support@hunch.dev](mailto:support@hunch.dev)
+
+---
+
+## 🔒 Security Note
+
+> Hunch uses Google's OAuth 2.0 authentication system, providing secure access to your BigQuery data. Your credentials are handled securely through Google's authentication system, and we only request the minimum permissions needed to access your BigQuery data.
