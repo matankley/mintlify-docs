@@ -1,102 +1,155 @@
 # Snowflake Integration Guide (For Hunch)
 
-Hey! If you're setting up Snowflake so Hunch can read your product data and help you move faster, here's exactly what to do.
+This guide will walk you through securely connecting your Snowflake account to Hunch in under 5 minutes.
 
-Takes ~5 minutes. Just follow the steps, and you're good.
+Go to Settings > Integrations and click "Connect" on the upper right side.
 
----
+Choose Snowflake (JWT)
 
-## ✅ What you need before you start
-
-- You should be an **ACCOUNTADMIN** (or have rights to create roles + integrations).
-- Know your:
-    - `database` name (e.g. `PROD_DB`)
-    - `schema` name (e.g. `PUBLIC`)
-    - `warehouse` name (e.g. `COMPUTE_WH`)
-- 👤 A **Snowflake user** you'll assign access to (e.g. `matan`) — this is the user Hunch will use to query your data
+<img 
+  src="/public/images/snowflake-integration/add-integration.png" 
+  alt="Add Integration"
+  className="w-full rounded-lg shadow-lg my-4"
+/>
 
 ---
 
-## 🧙‍♂️ Run these SQL commands in Snowflake
+## ✅ What You'll Need
 
-Copy + paste the block below into your worksheet. Replace:
+1. **Snowflake Account Identifier**
+    
+    You can find this in your account settings:
+    
+    <img 
+      src="/public/images/snowflake-integration/snowflake-account-id.png" 
+      alt="Snowflake Account ID 1"
+      className="w-full rounded-lg shadow-lg my-4"
+    />
+    
+    <img 
+      src="/public/images/snowflake-integration/snowflake-account-id2.png" 
+      alt="Snowflake Account ID 2"
+      className="w-full rounded-lg shadow-lg my-4"
+    />
 
-- `{database}` with your actual database name
-- `{schema}` with your actual schema
-- `{warehouse}` with your actual warehouse
-- `{user}` with the Snowflake user (e.g. `matan`)
+2. **Snowflake Username**
+    
+    You can use your existing user, or create a dedicated service user:
+    
+    ### Optional: Create a Dedicated Service User
+    
+    Run this SQL in your Snowflake UI:
+    
+    ```sql
+    CREATE USER hunch_service_user
+    DEFAULT_ROLE = HUNCH_ANALYST
+    DEFAULT_WAREHOUSE = COMPUTE_WH
+    TYPE = SERVICE;
+    ```
+
+---
+
+## 🛡️ Step 1: Set Up the Role and Permissions
+
+Make sure Hunch has access to the data you want it to analyze. Run the following SQL:
 
 ```sql
 CREATE ROLE IF NOT EXISTS HUNCH_ANALYST;
 
 GRANT SELECT ON ALL TABLES IN SCHEMA {database}.{schema} TO ROLE HUNCH_ANALYST;
 GRANT USAGE ON DATABASE {database} TO ROLE HUNCH_ANALYST;
-GRANT USAGE ON SCHEMA {schema} TO ROLE HUNCH_ANALYST;
+GRANT USAGE ON SCHEMA {database}.{schema} TO ROLE HUNCH_ANALYST;
 GRANT USAGE ON WAREHOUSE {warehouse} TO ROLE HUNCH_ANALYST;
 
-GRANT ROLE HUNCH_ANALYST TO USER {user};
+GRANT ROLE HUNCH_ANALYST TO USER {your_username_or_service_user};
+```
 
-CREATE SECURITY INTEGRATION HUNCH_OAUTH_INTEGRATION
-  TYPE = OAUTH
-  ENABLED = TRUE
-  OAUTH_CLIENT = CUSTOM
-  OAUTH_CLIENT_TYPE = 'CONFIDENTIAL'
-  OAUTH_REDIRECT_URI = 'https://api.nango.dev/oauth/callback'
-  OAUTH_ISSUE_REFRESH_TOKENS = TRUE
-  OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
-  PRE_AUTHORIZED_ROLES_LIST = ('HUNCH_ANALYST');
+Replace `{database}`, `{schema}`, and `{warehouse}` and `{your_username_or_service_user}` with your actual values.
 
-SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('HUNCH_OAUTH_INTEGRATION');
+---
+
+## 🔐 Step 2: Generate a Private/Public Key Pair
+
+Open your terminal and run:
+
+```bash
+openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out private_key.pem -nocrypt
+openssl rsa -in private_key.pem -pubout -out public_key.pem
+cat public_key.pem
+```
+
+- This will generate two files:
+    - `private_key.pem` → **Keep this secure! You'll upload it to Hunch.**
+    - `public_key.pem` → Copy the cleaned output (as one line).
+
+---
+
+## 🔁 Step 3: Add Public Key to Snowflake User
+
+Paste the public key into this Snowflake SQL command:
+
+```sql
+ALTER USER {your_username_or_service_user}
+SET RSA_PUBLIC_KEY={your-public-key};
 ```
 
 ---
 
-## 📤 Get your OAuth credentials
+## 🧾 Step 4: Get the Fingerprint
 
-After running the last line, you'll get:
+Run this in Snowflake to get the fingerprint of your uploaded public key:
 
-- `client_id`
-- `client_secret`
+```sql
+DESCRIBE USER {your_username_or_service_user};
+```
 
-Please send those back securely (encrypted note, 1Password share link, whatever works for you).
+Find the value under `RSA_PUBLIC_KEY_FP`
 
-Once we have that — we're good to go 🚀
-
----
-
-## 🚀 Now finish the connection inside Hunch
-
-Once the SQL setup is done:
-
-1. Log in to [app.hunch.dev](https://app.hunch.dev/)
-2. On "Sources" page → Click "Connect" on Snowflake integration.
-3. Follow this short 1-min video that shows the rest of the setup —
-    
-    entering your Snowflake domain, logging in, and selecting your DB / schema / warehouse
-    
-
-🎥 *Video: How to connect Snowflake inside Hunch*
-
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/58h_aoSTjzQ"
-  title="How to connect Snowflake inside Hunch"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowfullscreen
-></iframe>
-
-That's it. You're live.
+<img 
+  src="/public/images/snowflake-integration/snowflake-rsa-fp.png" 
+  alt="Snowflake RSA Fingerprint"
+  className="w-full rounded-lg shadow-lg my-4"
+/>
 
 ---
 
-## 💬 Need help?
+## 🧩 Step 5: Fill the Form in Hunch
 
-Ping us anytime. We'll walk you through it.
+Now that you have:
+
+- ✅ Snowflake Account Identifier
+- ✅ Username (or service user)
+- ✅ Private key (from Step 2)
+- ✅ RSA Public Key Fingerprint (from Step 4)
+
+Fill in these details in the Hunch integration form:
+
+<img 
+  src="/public/images/snowflake-integration/snowflake-form.png" 
+  alt="Snowflake Form"
+  className="w-full rounded-lg shadow-lg my-4"
+/>
+
+---
+
+## 📝 Step 6: Enter Your Warehouse, Database, and Schema
+
+In the final step, enter your Warehouse Name, Database Name, and Schema Name in the configuration form as shown below:
+
+<img 
+  src="/public/images/snowflake-integration/snowflake-config.png" 
+  alt="Snowflake Configuration Form"
+  className="w-full rounded-lg shadow-lg my-4"
+/>
+
+---
+
+### 🎉 Done! You're now connected.
+
+Need help? Ping us at support@hunch.dev
 
 ---
 
 ## 🔒 A note on security
 
-> **Security Note**: Hunch uses OAuth2 integration, the industry standard for secure Snowflake connections, which creates temporary, user-specific authentications that expire automatically and can be revoked instantly. This approach ensures granular access control and eliminates the need for permanent credentials, making it Snowflake's recommended method for secure third-party integrations. [Learn more about OAuth security →](https://docs.snowflake.com/en/user-guide/oauth-ext-custom) 
+> **Security Note**: Hunch uses JWT (JSON Web Token) authentication with RSA key pairs, which is Snowflake's recommended method for secure third-party integrations. This approach ensures that no passwords are stored and provides strong cryptographic security for the connection. 

@@ -20,6 +20,12 @@
               "pages/quickstart",
               "pages/integrations"
             ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/prompt-tricks"
+            ]
           }
         ]
       }
