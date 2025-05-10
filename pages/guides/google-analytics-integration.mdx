@@ -1,0 +1,78 @@
+This guide will help you securely connect your Google Analytics account to Hunch using Google SSO in just a few minutes.
+
+---
+
+## ✅ What You'll Need
+
+- **Google Account** with access to Google Analytics
+- **Google Analytics Property ID**
+- **Google Cloud Project ID**
+
+---
+
+## 1️⃣ Prepare Your Google Account
+
+1. Make sure you have a Google account with access to Google Analytics
+2. Ensure you have the necessary permissions to access Google Analytics data
+3. **Find your Google Analytics Property ID**:
+   - Go to **Google Analytics** > Admin
+   - In the Property column, click on **Property detailes**
+   - Your Property ID appears at the top to the right (format: XXXXXXXXX§)
+
+<img 
+  src="/public/images/ga4-integration/property_id.png" 
+  alt="Google Analytics Property ID"
+  className="w-full rounded-lg shadow-lg my-4"
+/>
+
+4. **Find your Google Cloud Project ID**:
+   - Go to **Google Cloud Console** > Click on the project name (top left)
+   - Your Project ID appears in the opened modal
+   - Select your desired project
+
+<img 
+  src="/public/images/bigquery-integration/locate-gcp-project-id.png" 
+  alt="Google Cloud Console"
+  className="w-full rounded-lg shadow-lg my-4"
+/>
+
+---
+
+## 2️⃣ Connect Google Analytics to Hunch
+
+1. Log into [Hunch.dev](https://app.hunch.dev/login)
+2. Go to **Settings > Integrations**
+3. Click **+Connect** in the upper right
+4. Select **Google Analytics** from the integration options
+
+<img 
+  src="/public/images/shared/add-integration.png" 
+  alt="Add Integration"
+  className="w-full rounded-lg shadow-lg my-4"
+/>
+
+### Step 2: Authenticate with Google
+5. Click **Sign in with Google** to authenticate with your Google account
+
+### Step 3: Complete the Setup
+Once you close the window, the integration status is Yellow 🟡. Click **Configure**
+- Fill in the **Google Analytics Property ID** from step 1
+- Fill in the **Google Cloud Project ID** from step 1
+
+<img 
+  src="/public/images/ga4-integration/configure-form.png" 
+  alt="Google Analytics Property ID"
+  className="w-full rounded-lg shadow-lg my-4"
+/>
+
+---
+
+## 🎉 Done! You're now connected.
+
+Need help? Ping us at [support@hunch.dev](mailto:support@hunch.dev)
+
+---
+
+## 🔒 Security Note
+
+> Hunch uses Google's OAuth 2.0 authentication system, providing secure access to your Google Analytics data. Your credentials are handled securely through Google's authentication system, and we only request the minimum permissions needed to access your Google Analytics data. 
